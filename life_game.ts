@@ -6,14 +6,13 @@
 //login
 //Leaderboard?
 //Fixa egna levlar
+//stjärnmärkning
 
 import * as PromptSync from "prompt-sync";
 
 import { type ProbingFunction, type ProbingHashtable, type HashFunction, 
          probe_linear, ph_empty, ph_insert, ph_lookup
-       } from "./hashtables"
-import { type List, list, append, head, tail, is_null } from './list';
-import { length, list_ref } from "./list_prelude";
+       } from '../../../../../pkd_kod/lib/hashtables'
 
 const prompt: PromptSync.Prompt = PromptSync({sigint:true});
 //Types
@@ -128,7 +127,6 @@ function complete_tasks(user: User){
                 console.log("Well done");
                 user.tasks[dwm][i].progress = true;
                 add_points(dwm, user);
-                console.log(user.tasks[dwm]);
                 return true;
             } else if(i === taskarray.length - 1){
                 return false;
@@ -204,6 +202,7 @@ console.log(driver_loop());
 
 
 //Vad händer med progress när man tar bort tasks? Hur ska level påverkas?
+//Funkar typ inte
 function remove_tasks(user: User){
     function remove_tasks_helper(dwm: number, user: User): void { //Bättre att man får skriva in själv?
         const curr_dwm = daily_weekly_or_monthly[dwm];
@@ -217,6 +216,9 @@ function remove_tasks(user: User){
                     const c = prompt("Remove " + user.tasks[dwm][i].task + "? y/n ")
                     if(c === "y" || c === "Y"){
                         console.log(user.tasks[dwm][i].task + " removed")
+                        //Hur tar man bort ett helt record i en array?
+                        //Nu blir det bara en tom sträng, så vil vi inte ha det
+                        user.tasks[dwm][i].task = ""
                         break
                     } else if(c === "n" || c === "N"){
                         break
