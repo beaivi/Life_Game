@@ -1,56 +1,122 @@
-//Se avklarade/icke avklarade uppgifter
-//Kalender
-//Ta bort tasks
-//Hindra från att lägga till samma task flera gånger
-//Skapa förbestämda tasks att välja ifrån
-//login
-//Leaderboard?
-//Fixa egna levlar
 
-import * as PromptSync from "prompt-sync";
+import { ProbingHashtable, hash_id, ph_empty, probe_linear, ph_lookup, ph_insert, HashFunction } from './lib/hashtables';
+//import { type List, list, append, head, tail, is_null } from './lib/list';
+//import { length, list_ref } from "./lib/list_prelude";
 
-import { type ProbingFunction, type ProbingHashtable, type HashFunction, 
-         probe_linear, ph_empty, ph_insert, ph_lookup
-       } from "../../../../lib/hashtables"
-import { type List, list, append, head, tail, is_null } from '../../../../lib/list';
-import { length, list_ref } from "../../../../lib/list_prelude";
-
-const prompt: PromptSync.Prompt = PromptSync({sigint:true});
+const input = require ('prompt-sync')();
 //Types
 type User = {
              username: string,
-             name: string,
-             tasks: dwm,
+             password: string,
+             tasks: Array<Task>;
              score: Points,
             };
-type Points = number;
-type dwm = Array<TaskArray>
-type TaskArray = Array<Task>; //bst eller rbt istället?
+
 type Task = {
-             task: string,
-             progress: boolean 
-            };
+    name: string,
+    freq: "daily" | "weekly" | "monthly",
+    status: boolean
+};
+
+type Points = number;
+//type dwm = Array<TaskArray>
+//type TaskArray = Array<Task>; //bst eller rbt istället?
+
 type UserTable = ProbingHashtable<string, User>;
 
-const my_hash: HashFunction<string> = x => x.length;
-const user_table: UserTable = ph_empty(100, probe_linear(my_hash));
-const daily_weekly_or_monthly = ["daily", "weekly", "monthly"];
+//const my_hash: HashFunction<string> = x => x.length;
 
-function new_user(): User { 
-    var username_input = prompt("Choose username: ");
-    var name = prompt("What's your name? ");
-    const tasks: dwm = [[], [], []];
-    const user : User = { username: "",        
-                          name: "", 
-                          tasks: tasks,
-                          score: 0
-                        };
-    user.username = username_input;
-    user.name = name;
-    ph_insert(user_table, user.username, user);
-    return user;
+
+//djb2a hash function. Vi kan importera den istället kanske? från: https://www.npmjs.com/package/djb2a?activeTab=readme
+function string_to_hash(name: string): number {
+    let hash = 0;
+    if (name.length < 1) {
+        return hash;
+    }
+    else {
+        for (let i = 0; i < name.length; i++) {
+            let char = name.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+    }
+    return hash;
 }
-//Hur göra om två lika tasks
+
+const my_hash: HashFunction<string> = string_to_hash;
+
+const table_length = 20;
+
+const user_table: UserTable = ph_empty(table_length, probe_linear(my_hash));
+//const daily_weekly_or_monthly = ["daily", "weekly", "monthly"];
+
+function add_user(name: string): User {
+    return {
+        username: name,
+        password: "",
+        tasks: [],
+        score: 0
+
+    };
+}
+function create_user(): void {
+    let created_user: boolean = false;
+    let password: string = "";
+    let username: string  = "";
+    while (created_user === false) {
+        username = input("Choose an username. ");
+        if (ph_lookup(user_table, username) === undefined) {
+            console.log("Your username was available.");
+            ph_insert(user_table, username, add_user(username));
+            created_user = true;
+        }
+        else {
+            console.log("Your usernames was unavailable, please try another one. ");
+        }
+    }
+    while (password.length < 7) {
+        password = input("Choose a password for your user ");
+        if (password.length < 7) {
+            console.log("The password should be atleast 6 characters long. ")
+        }
+        else {
+            console.log("You have sucessfully chosen a password.")
+            const user: User | undefined = ph_lookup(user_table, username)
+            if (user !== undefined) {
+                user.password = password;
+            }
+            
+        }
+    }
+}
+
+
+function add_tasks(user: string): void {
+    const username = ph_lookup(user_table, user);
+    function create_task() {
+        const task_name: string = input("Add a task: ");
+        while (true) {
+        let freq: string = input("How often do you want to repeat this task? Daily, weekly or monthly ");
+        freq = freq.toLowerCase();
+        if (freq !== "daily" && freq !== "weekly" && freq !== "monthly") {
+            console.log("Invalid input, write your choice are 'daily', 'weekly' or 'monthly' ");
+        } 
+        else {
+            let new_task: Task = {
+                name: task_name,
+                freq: freq,
+                status: false,
+            };
+            username?.tasks.push(new_task);
+            break;
+        }
+        }
+    }
+    create_task();
+}
+
+
+/*
 function add_tasks(dwm: number, user: User): void {
     const curr_dwm =  daily_weekly_or_monthly[dwm];
     function get_tasks() {
@@ -82,6 +148,7 @@ function add_tasks(dwm: number, user: User): void {
     
     }
 }
+
 
 function add_points(dwm: number, user: User) {
     if(dwm === 0){
@@ -243,3 +310,17 @@ function remove_tasks(user: User){
         remove_tasks(user);
     }
 }
+
+*/
+
+const hej = [{name: "Vattna", freq: "daily", status: false}, {name: "Städa", freq: "weekly", status: "false"}];
+const hejsan = hej.find(x => x.name == "Vattna");
+if (hejsan !== undefined) {
+    hejsan.name = "Inget";
+}
+
+console.log(hejsan);
+//create_user();
+//add_tasks("Alicia");
+
+//console.log(user_table);
