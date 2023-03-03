@@ -1,5 +1,5 @@
 import { ProbingHashtable, ph_empty, probe_linear, ph_lookup, ph_insert, 
-    HashFunction, ph_delete  } from "../../../../lib/hashtables";
+    HashFunction, ph_delete  } from "../lib/hashtables";
 
   //Types
 export type User = {
@@ -220,9 +220,6 @@ function preset(user: User): void { //Ska bara gå att kalla på om man har en h
     * @param user the user that gets its tasks updated
 **/
 export function complete_tasks(user: User): void {
-    //Ändrade den här så den fungerade med nya levels variabeln. Nu får man inte ett oändligt score,
-    //eftersom vi drar bort 100 från scoret varje gång man levlar upp, vill vi inte det kan vi ändra
-    //det till modulo 100.
     function level_up(): void {
         if (user.score > 100) {
             user.level += 1;
@@ -388,7 +385,7 @@ export function show_tasks(user: User): void {
  */
 function settings_menu(user: User): void {
     console.log("What do you want to do?");
-    console.log("\n a) Change password \n b) Change username\n");
+    console.log("\n a) Change password \n b) Change username\n x) Back to main menu ");
     let have_choiced = false;
     while(!have_choiced){
         let choice: string = input("Choose a or b: ");
@@ -399,6 +396,8 @@ function settings_menu(user: User): void {
         } else if(choice === "b"){
             change_username(user);
             have_choiced = true;
+        } else if (choice === "x"){
+            back_to_menu();
         } else {
             console.log("\nWrong input\n");
         }
@@ -450,7 +449,7 @@ function change_username(user: User): void {
             ph_delete(user_table, user.username);
             user.username = new_username;
             ph_insert(user_table, user.username, user);
-            console.log("\nYou have sucessfuly changed your username\n");
+            console.log("\nYou have sucessfully changed your username\n");
             username_available = true;
         } else {
             console.log("Your username was unavailable, please try another one. ");
@@ -477,7 +476,7 @@ export function login(): User | undefined {
             console.log("\nYou have successfully logged in.\n");
             return curr_user;
         } else {
-            console.log("Wrong Pasword \n  Try again");
+            console.log("Wrong Password \n  Try again");
         }
         }
     } else {
@@ -486,7 +485,6 @@ export function login(): User | undefined {
     }
 }
 
-// Den funkar inte riktigt än.
 export function remove_task(user: User) {
     const curr_task: string = input("Which task do you want to remove?: ")
     const task_look_up: Task | undefined  = user.tasks.find(x => x.name == curr_task);
@@ -498,8 +496,12 @@ export function remove_task(user: User) {
         } else {}
     } else {
         const index = user.tasks.indexOf(task_look_up);
-        console.log(index, "index");
-        user.tasks = user.tasks.slice(index, 1);
+        user.tasks = user.tasks.splice(index, 1);
+        console.log("You successfully removed the task " + curr_task);
+        const repeat = input("Do you want to remove another task? Y / N ");
+        if (repeat === "Y") {
+            remove_task(user);
+        } else {}
         } 
 }
 
@@ -529,7 +531,7 @@ export function log_in_menu() {
  */
 function task_edit_menu(user: User): void {
     console.log("\nWhat do you want do do?");
-    console.log("\n a) Add tasks \n b) Remove tasks \n c) Reset time\n"); //inte reset time men vet inte vad jag ska skriva
+    console.log("\n a) Add tasks \n b) Remove tasks \n c) Reset time\n x) Back to main menu\n"); //inte reset time men vet inte vad jag ska skriva
     let choice: string = input("Choose a, b or c: ");
     choice = choice.toLowerCase();
     let have_choiced: boolean = false;
@@ -544,10 +546,17 @@ function task_edit_menu(user: User): void {
         } else if(choice === "c") {
             reset_tasks(user);
             have_choiced = true;
-        } else {
+        } else if (choice === "x"){
+            back_to_menu();
+        }
+        else {
             console.log("Wrong input");
         }
     }
+}
+
+function back_to_menu(): void {
+    main_menu();
 }
 
 /**Den här funkar, men det finns mkt som kan förbättras, bland annat
@@ -555,34 +564,38 @@ function task_edit_menu(user: User): void {
  * 
  * 
 **/
-while (true) {
-    if (active_user === undefined) {
-        log_in_menu();
-    }
-    if (active_user !== undefined) {
-        console.log("\nWhat do you want to do?")
-        console.log("\n a) Edit tasks \n b) Complete tasks \n c) Show your points \n" +
-                 " d) Show your tasks \n e) Log out \n f) Settings \n")
-        let choice: string = input("Choose a, b, c, d, e or f: ");
-        choice = choice.toLowerCase();
-        console.log("");
-        if(choice === "a"){
-            task_edit_menu(active_user);
-        } else if(choice === "b"){
-            complete_tasks(active_user);
-        } else if(choice === "c"){
-            const level = (x: User)  => x.level;
-            const score = (x: User) => x.score;
-            console.log("Your level is ", level(active_user), "\n and your score is:", score(active_user));
-        } else if (choice === "d"){
-            show_tasks(active_user);
-        } else if (choice === "e"){
-            active_user = undefined;
-        } else if (choice === "f"){
-            settings_menu(active_user);
-        } else {
-            console.clear();
-            console.log("Wrong input");
+function main_menu(): void {
+    while (true) {
+        if (active_user === undefined) {
+            log_in_menu();
         }
-    } 
+        if (active_user !== undefined) {
+            console.log("\nWhat do you want to do?")
+            console.log("\n a) Add or edit tasks \n b) Complete tasks \n c) Show your points \n" +
+                     " d) Show your tasks \n e) Log out \n f) Settings \n")
+            let choice: string = input("Choose a, b, c, d, e or f: ");
+            choice = choice.toLowerCase();
+            console.log("");
+            if(choice === "a"){
+                task_edit_menu(active_user);
+            } else if(choice === "b"){
+                complete_tasks(active_user);
+            } else if(choice === "c"){
+                const level = (x: User)  => x.level;
+                const score = (x: User) => x.score;
+                console.log("Your level is ", level(active_user), "\nand your score is:", score(active_user));
+            } else if (choice === "d"){
+                show_tasks(active_user);
+            } else if (choice === "e"){
+                active_user = undefined;
+            } else if (choice === "f"){
+                settings_menu(active_user);
+            } else {
+                console.clear();
+                console.log("Wrong input");
+            }
+        } 
+    }
+
 }
+main_menu();
