@@ -19,7 +19,6 @@ type Freq = "daily" | "weekly" | "monthly"
 type Points = number;
 type UserTable = ProbingHashtable<string, User>;
 
-
 export function string_to_hash(name: string): number {
     let hash = 0;
     if (name.length < 1) {
@@ -173,7 +172,7 @@ function preset(user: User): void { //Ska bara gå att kalla på om man har en h
             }
         }
         if(count !== 0) {
-            console.log("Added " + count + "tasks");
+            console.log("Added " + count + " tasks");
         } else {
             console.log("\nYou did not add any tasks\n")
             let have_choiced: boolean = false;
@@ -306,7 +305,7 @@ function reset_tasks(user: User): void {
  * taking into account the frequency of the task.
  * @param user the user with the tasks shown
  */
-export function show_tasks(user: User): void {
+export function show_tasks_menu(user: User): void {
     function show_tasks_with_freq(taskarray: Array<Task>): void {
         function show_freq(taskarray: Array<Task>, freq: string) {
             if(taskarray.length !== 0) {
@@ -413,19 +412,19 @@ function change_password(user: User): void {
         const old_password: string = input.hide("Old password: ")
 
         if(old_password === user.password){
-            let password_match:boolean = false;
+            let password_match: boolean = false;
             while(!password_match){
                 let new_password: string = input.hide("New password: ")
-                while(new_password.length < 6){
-                if(new_password.length < 6){
-                    console.log("\nThe password should be atleast 6 characters long.")
-                    new_password = input.hide("New password: ")
+                while(new_password.length < 6) {
+                if(new_password.length < 6) {
+                    console.log("\nThe password should be atleast 6 characters long.");
+                    new_password = input.hide("New password: ");
                 }
                 }
-                const confirmed_password: string = input.hide("Confirm your new password: ")
+                const confirmed_password: string = input.hide("Confirm your new password: ");
                 if(new_password === confirmed_password){
                     user.password = new_password;
-                    console.log("\nYou have sucessfully changed your password\n")
+                    console.log("\nYou have sucessfully changed your password\n");
                     password_match = true;
                 } else {
                     console.log("\nPassword confirmation doesn't match the password, try again\n")
@@ -433,7 +432,7 @@ function change_password(user: User): void {
             }
             old_password_ok = true;
         } else {
-            console.log("Wrong password, try again")
+            console.log("Wrong password, try again");
         }
     }
 }
@@ -468,7 +467,7 @@ export function login(): User | undefined {
     const curr_username: string = input("Username: ");
     const curr_user = ph_lookup(user_table, curr_username);
     if(curr_user !== undefined) {
-        let pass_input: Boolean = false;
+        let pass_input: boolean = false;
         while(!pass_input) {
         const password: string = input.hide("Password: ");
         if(curr_user.password === password) {
@@ -476,7 +475,7 @@ export function login(): User | undefined {
             console.log("\nYou have successfully logged in.\n");
             return curr_user;
         } else {
-            console.log("Wrong Password \n  Try again");
+            console.log("\nWrong Password, try again\n");
         }
         }
     } else {
@@ -509,7 +508,7 @@ let active_user: User | undefined = undefined;
 
 export function log_in_menu() {
     while (active_user === undefined) {
-        console.log("\nDo you want to: \n A. register \n B. log in?")
+        console.log("\nDo you want to: \n A. register \n B. log in?\n")
         let choice: string = input("Choose A or B. ")
         choice = choice.toLowerCase();
         if (choice === "a") {
@@ -531,12 +530,12 @@ export function log_in_menu() {
  */
 function task_edit_menu(user: User): void {
     console.log("\nWhat do you want do do?");
-    console.log("\n a) Add tasks \n b) Remove tasks \n c) Reset time\n x) Back to main menu\n"); //inte reset time men vet inte vad jag ska skriva
-    let choice: string = input("Choose a, b or c: ");
-    choice = choice.toLowerCase();
+    console.log("\n a) Add tasks \n b) Remove tasks \n c) Reset time\n x) Back to main menu\n"); //inte reset time men vet inte vad jag ska skriv
     let have_choiced: boolean = false;
     console.log("");
     while(!have_choiced) {
+        let choice: string = input("Choose a, b or c: ");
+        choice = choice.toLowerCase();
         if(choice === "a") {
             add_task(user);
             have_choiced = true;
@@ -585,7 +584,7 @@ function main_menu(): void {
                 const score = (x: User) => x.score;
                 console.log("Your level is ", level(active_user), "\nand your score is:", score(active_user));
             } else if (choice === "d"){
-                show_tasks(active_user);
+                show_tasks_menu(active_user);
             } else if (choice === "e"){
                 active_user = undefined;
             } else if (choice === "f"){
