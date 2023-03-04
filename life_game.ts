@@ -1,6 +1,6 @@
 import { ProbingHashtable, ph_empty, probe_linear, ph_lookup, ph_insert, 
-    HashFunction, ph_delete  } from "../lib/hashtables";
-
+    HashFunction, ph_delete  } from "../../../../lib/hashtables";
+//Special tasks som är daily, weekly or monthly
   //Types
 export type User = {
     username: string,
@@ -13,6 +13,7 @@ export type User = {
 export type Task = {
 name: string,
 freq: Freq,
+special_points: undefined | number
 status: boolean
 };
 type Freq = "daily" | "weekly" | "monthly"
@@ -106,7 +107,7 @@ export function add_task(user: User): void {
         }
         while (!task_exists) {
         let freq: string = input("How often do you want to repeat this task?" + 
-                                 "Daily, weekly or monthly: ");
+                                 " Daily, weekly or monthly: ");
         freq = freq.toLowerCase();
         if (freq !== "daily" && freq !== "weekly" && freq !== "monthly") {
             console.log("\nInvalid input, write your choice as" + 
@@ -115,8 +116,32 @@ export function add_task(user: User): void {
             let new_task: Task = {
                 name: task_name,
                 freq: freq,
+                special_points: undefined,
                 status: false,
             };
+            let have_choiced: boolean = false;
+            while(!have_choiced){
+                let choice: string = input("Would you like to change the points given for this task? Y / N ");
+                choice = choice.toLowerCase();
+                if(choice === "y"){
+                    let is_number: boolean = false;
+                    while(!is_number) {
+                        let own_points: string = input("How many points should you earn for completing " + task_name + "? ");
+                        const points: number = parseFloat(own_points)
+                        if(isNaN(points)){
+                            console.log("\nInput must be a number")
+                        } else {
+                        new_task.special_points = points;
+                        is_number = true;
+                        have_choiced = true;
+                        }
+                    }
+                } else if(choice === "n"){
+                    have_choiced = true;
+                } else {
+                    console.log("\nWrong input");
+                }
+            }
             user.tasks.push(new_task);
             console.log("\n" + task_name + " added as a " + freq + " task\n");
             task_exists = true;
@@ -143,7 +168,7 @@ function preset(user: User): void { //Ska bara gå att kalla på om man har en h
     //Tänker att den kan komma upp som ett första val direkt när man skapat nytt konto och eventuellt om man tar bort ALLA sina tasks med remove.
     function add_presets(): void {
         function add_tasks_to_array(task_name: string, task_freq: Freq): void {
-            choices.push({name: task_name, freq: task_freq, status: false,});
+            choices.push({name: task_name, freq: task_freq, special_points: undefined, status: false,});
         }
         const choices: Array<Task> = [];
         add_tasks_to_array("Cook", "daily"); //Någon annan får gärna lägga in rimilga tasks ca 3-4 per freq kanske är rimligt.
@@ -227,7 +252,12 @@ export function complete_tasks(user: User): void {
         }   
     }
     function add_points(user: User, task: Task): void {
-        if(task.freq === "daily") {
+        if(task.special_points !== undefined){
+            console.log(task.special_points + " points earned");
+            user.score = user.score + task.special_points;
+            level_up();
+        }
+        else if(task.freq === "daily") {
             console.log("1 point earned")
             user.score = user.score + 1;
             level_up();
@@ -241,8 +271,7 @@ export function complete_tasks(user: User): void {
             level_up();   
         }
     }
-    const completed_task: string = input("Task completed: ");
-    function helper(taskarray: Array<Task>): boolean {
+    function task_existance(taskarray: Array<Task>): boolean {
         for (let i = 0; i < taskarray.length; i++) {
             if(completed_task === taskarray[i].name){
                 if(!taskarray[i].status){
@@ -266,12 +295,13 @@ export function complete_tasks(user: User): void {
         }
         return false;
     }
-    if(!(helper(user.tasks))) {
+    const completed_task: string = input("Task completed: ");
+    if(!(task_existance(user.tasks))) {
         console.log("\nYou have not added that task");
     } else {}
 }
 /**
- * Resetts a users daily, weekly or monthly tasks
+ * Resetts the status of a users daily, weekly or monthly tasks
  * @param user the user that gets its task's status resetted
  */
 function reset_tasks(user: User): void {
@@ -484,7 +514,11 @@ export function login(): User | undefined {
     }
 }
 
-export function remove_task(user: User) {
+/**
+ * Removes a task from a users tasks
+ * @param user the user who gets its task removed
+ */
+export function remove_task(user: User): void {
     const curr_task: string = input("Which task do you want to remove?: ")
     const task_look_up: Task | undefined  = user.tasks.find(x => x.name == curr_task);
     if (task_look_up === undefined) {
