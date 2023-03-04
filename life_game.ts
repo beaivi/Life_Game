@@ -1,6 +1,5 @@
 import { ProbingHashtable, ph_empty, probe_linear, ph_lookup, ph_insert, 
     HashFunction, ph_delete  } from "../../../../lib/hashtables";
-//Special tasks som är daily, weekly or monthly
   //Types
 export type User = {
     username: string,
@@ -95,121 +94,134 @@ export function create_user(): User {
  * @param User the user the task is added to.
  * */
 export function add_task(user: User): void {
-    function create_task() {
-        const task_name: string = input("Add a task: ");
+    function create_task(): void {
+        const curr_task: string = input("Add a task: ");
         let task_exists: boolean = false;
-        for(let i = 0; i < user.tasks.length; i++) {
-            if(task_name === user.tasks[i].name) {
+        const task: Task | undefined = user.tasks.find(x => 
+                                                         x.name == curr_task);
+        if (task !== undefined) {
                 task_exists = true;
-                console.log("\nYou already have " + task_name + " as a task\n");
-                break;
+                console.log("\nYou already have " + curr_task + " as a task\n");
             }
-        }
         while (!task_exists) {
-        let freq: string = input("How often do you want to repeat this task?" + 
-                                 " Daily, weekly or monthly: ");
-        freq = freq.toLowerCase();
-        if (freq !== "daily" && freq !== "weekly" && freq !== "monthly") {
-            console.log("\nInvalid input, write your choice as" + 
-                        " 'daily', 'weekly' or 'monthly'. ");
-        } else { 
-            let new_task: Task = {
-                name: task_name,
-                freq: freq,
-                special_points: undefined,
-                status: false,
-            };
-            let have_choiced: boolean = false;
-            while(!have_choiced){
-                let choice: string = input("Would you like to change the points given for this task? Y / N ");
-                choice = choice.toLowerCase();
-                if(choice === "y"){
-                    let is_number: boolean = false;
-                    while(!is_number) {
-                        let own_points: string = input("How many points should you earn for completing " + task_name + "? ");
-                        const points: number = parseFloat(own_points)
-                        if(isNaN(points)){
-                            console.log("\nInput must be a number")
-                        } else {
-                        new_task.special_points = points;
-                        is_number = true;
-                        have_choiced = true;
+            let freq: string = input("How often do you want to repeat the task?"
+                                   + " Daily, weekly or monthly: ");
+            freq = freq.toLowerCase();
+            if (freq !== "daily" && freq !== "weekly" && freq !== "monthly") {
+                console.log("\nInvalid input, write your choice as" + 
+                            " 'daily', 'weekly' or 'monthly'. ");
+            } else { 
+                let new_task: Task = {
+                    name: curr_task,
+                    freq: freq,
+                    special_points: undefined,
+                    status: false,
+                    };
+                let have_chosen: boolean = false;
+                while (!have_chosen) {
+                    let choice: string = input("Would you like to change the" 
+                                             + "points given for this task? "
+                                             + "Y / N ");
+                    choice = choice.toLowerCase();
+                    if (choice === "y") {
+                        let is_number: boolean = false;
+                        while (!is_number) {
+                            let own_points: string = input("How many points " 
+                                                         + "should your earn " 
+                                                         + "for completing " 
+                                                         + curr_task + "? ");
+                            const points: number = parseFloat(own_points);
+                            if (isNaN(points)) {
+                                console.log("\nInput must be a number");
+                            } else {
+                                new_task.special_points = points;
+                                is_number = true;
+                                have_chosen = true;
+                            }
                         }
+                    } else if (choice === "n") {
+                        have_chosen = true;
+                    } else {
+                        console.log("\nWrong input");
                     }
-                } else if(choice === "n"){
-                    have_choiced = true;
-                } else {
-                    console.log("\nWrong input");
                 }
+                user.tasks.push(new_task);
+                console.log("");
+                console.log(curr_task + " added as a " + freq + " task\n");
+                task_exists = true;
             }
-            user.tasks.push(new_task);
-            console.log("\n" + task_name + " added as a " + freq + " task\n");
-            task_exists = true;
-        }
         }
     }
     create_task();
-    while(true) {
+    let have_chosen: boolean = false;
+    while (!have_chosen) {
         let repeat: string = input("Do you want to input another task? Y / N ");
         repeat = repeat.toLowerCase();
         if (repeat === "y") {
             console.log("");
+            have_chosen = true;
             create_task();
+        } else if (repeat === "n") {
+            have_chosen = true;
         } else {
-            break;
+            console.log("Wrong input");
         }
     }
 }
 /**
- * Lets the user choose tasks from a preset
+ * Lets the user choose tasks from a preset of tasks
  * @param user the user the presets may be added to
  */
-function preset(user: User): void { //Ska bara gå att kalla på om man har en helt tom tasks array. Annars kan det bli dubbletter
-    //Tänker att den kan komma upp som ett första val direkt när man skapat nytt konto och eventuellt om man tar bort ALLA sina tasks med remove.
+function preset(user: User): void { 
     function add_presets(): void {
         function add_tasks_to_array(task_name: string, task_freq: Freq): void {
-            choices.push({name: task_name, freq: task_freq, special_points: undefined, status: false,});
+            const curr_task: Task = {name: task_name, 
+                                     freq: task_freq, 
+                                     special_points: undefined, 
+                                     status: false,
+                                    }
+            preset_array.push(curr_task);
         }
-        const choices: Array<Task> = [];
-        add_tasks_to_array("Cook", "daily"); //Någon annan får gärna lägga in rimilga tasks ca 3-4 per freq kanske är rimligt.
+        const preset_array: Array<Task> = [];
+        add_tasks_to_array("Cook", "daily");
         add_tasks_to_array("Make bed", "daily");
         add_tasks_to_array("Dishes", "daily");
         add_tasks_to_array("Water plants", "weekly");
-        add_tasks_to_array("Vakum", "weekly");
+        add_tasks_to_array("Vakuum", "weekly");
         add_tasks_to_array("Laundry", "monthly");
-        let count: number = 0;
-        for(let i = 0; i < choices.length; i++) {
+        for (let i = 0; i < preset_array.length; i++) {
             console.log("");
-            let have_choiced: boolean = false;
-            while(!have_choiced){
-                let choice = input("Do you want to add " + choices[i].name +
-                            " as a " + choices[i].freq + " task? Y / N ");
+            let have_chosen: boolean = false;
+            while (!have_chosen) {
+                let choice: string = input("Do you want to add " 
+                                         + preset_array[i].name 
+                                         + " as a " + preset_array[i].freq 
+                                         + " task? Y / N ");
                 choice = choice.toLowerCase();
-                if(choice === "y") {
-                    user.tasks.push(choices[i]);
-                    count++
-                    have_choiced = true;
-                } else if(choice === "n") {
-                    have_choiced = true;
+                if (choice === "y") {
+                    user.tasks.push(preset_array[i]);
+                    have_chosen = true;
+                } else if (choice === "n") {
+                    have_chosen = true;
                 } else {
                     console.log("Wrong input");
                 }
             }
         }
-        if(count !== 0) {
-            console.log("Added " + count + " tasks");
+        if (user.tasks.length !== 0) {
+            console.log("Added " + user.tasks.length + " tasks");
         } else {
-            console.log("\nYou did not add any tasks\n")
-            let have_choiced: boolean = false;
-            while(!have_choiced) {
-                let choice: string = input("Do you want do add your own tasks?" +
-                                           " Y / N ");
+            console.log("\nYou did not add any tasks\n");
+            let have_chosen: boolean = false;
+            while (!have_chosen) {
+                let choice: string = input("Do you want do add your own tasks?" 
+                                         + " Y / N ");
                 choice = choice.toLowerCase();
-                if(choice === "y"){
+                if (choice === "y") {
                     add_task(user);
-                    have_choiced = true;
-                } else if(choice === "n") {
-                    have_choiced = true;
+                    have_chosen = true;
+                } else if (choice === "n") {
+                    have_chosen = true;
                 } else {
                     console.log("Wrong input");
                 }
@@ -217,24 +229,25 @@ function preset(user: User): void { //Ska bara gå att kalla på om man har en h
 
         }
     }
-    if(user.tasks.length === 0) {
-        let have_choiced: boolean = false;
-        while(!have_choiced) {
-            let choice = input("Do you want to choose some tasks from a preset?" + 
-                               " Y / N ")
+    if (user.tasks.length === 0) {
+        let have_chosen: boolean = false;
+        while (!have_chosen) {
+            let choice: string = input("Do you want to choose "
+                                     + "some tasks from a preset?" 
+                                     + " Y / N ");
             choice = choice.toLowerCase();
-            if(choice === "y"){
+            if (choice === "y") {
                 add_presets();
-                have_choiced = true;
-            } else if(choice === "n"){
-                have_choiced = true;
+                have_chosen = true;
+            } else if (choice === "n") {
+                have_chosen = true;
             } else {
                 console.log("\nWrong input\n");
             }
         }
     } else {
-        console.log("You can't choose tasks from the preset" + 
-                    " if you already have tasks");
+        console.log("You can't choose tasks from the preset"
+                  + " if you already have tasks");
     }
 }
 
@@ -252,51 +265,52 @@ export function complete_tasks(user: User): void {
         }   
     }
     function add_points(user: User, task: Task): void {
-        if(task.special_points !== undefined){
+        if (task.special_points !== undefined) {
             console.log(task.special_points + " points earned");
             user.score = user.score + task.special_points;
             level_up();
         }
-        else if(task.freq === "daily") {
-            console.log("1 point earned")
+        else if (task.freq === "daily") {
+            console.log("1 point earned");
             user.score = user.score + 1;
             level_up();
-        } else if(task.freq === "weekly") {
-            console.log("3 points earned")
+        } else if (task.freq === "weekly") {
+            console.log("3 points earned");
             user.score = user.score + 3;
             level_up();
         } else {
-            console.log("10 points earned")
+            console.log("10 points earned");
             user.score = user.score + 10;
             level_up();   
         }
     }
-    function task_existance(taskarray: Array<Task>): boolean {
+    function task_existence(taskarray: Array<Task>): boolean {
         for (let i = 0; i < taskarray.length; i++) {
-            if(completed_task === taskarray[i].name){
-                if(!taskarray[i].status){
+            if (completed_task === taskarray[i].name) {
+                if (!taskarray[i].status) {
                     console.log("\nWell done");
                     user.tasks[i].status = true;
                     add_points(user, user.tasks[i]);
                 } else {
                     let status: string = "";
-                    if(taskarray[i].freq === "daily"){
+                    if (taskarray[i].freq === "daily") {
                         status = "tomorrow";
-                    } else if(taskarray[i].freq === "weekly"){
+                    } else if (taskarray[i].freq === "weekly") {
                         status = "next week";
-                    } else if(taskarray[i].freq === "monthly"){
+                    } else if (taskarray[i].freq === "monthly") {
                         status = "next month";
                     }
-                    console.log("You have already completed that task, wait until " +
-                                status + " to complete that task again" );
+                    console.log("You have already completed that task, "
+                              + "wait until " + status 
+                              + " to complete that task again" );
                 }
-                return true
+                return true;
             } else {}
         }
         return false;
     }
     const completed_task: string = input("Task completed: ");
-    if(!(task_existance(user.tasks))) {
+    if (!(task_existence(user.tasks))) {
         console.log("\nYou have not added that task");
     } else {}
 }
@@ -306,8 +320,8 @@ export function complete_tasks(user: User): void {
  */
 function reset_tasks(user: User): void {
     function reset(user: User, curr_freq: string): void {
-        for(let i = 0; i < user.tasks.length; i++){
-            if(user.tasks[i].freq === curr_freq){
+        for (let i = 0; i < user.tasks.length; i++) {
+            if (user.tasks[i].freq === curr_freq) {
                 user.tasks[i].status = false;
             }
         }
@@ -315,14 +329,15 @@ function reset_tasks(user: User): void {
         console.log("Your " + curr_freq + " tasks has been resetted");
     }
     let is_resetted: boolean = false;
-    while(!is_resetted) {
-        let reset_prompt: string = input("Reset daily, weekly or monthly tasks: ");
+    while (!is_resetted) {
+        let reset_prompt: string = input("Reset daily, weekly " 
+                                       + "or monthly tasks: ");
         reset_prompt = reset_prompt.toLowerCase();
-        if(reset_prompt === "daily"){
+        if (reset_prompt === "daily") {
             reset(user, "daily");
-        } else if(reset_prompt === "weekly"){
+        } else if (reset_prompt === "weekly") {
             reset(user, "weekly");
-        } else if(reset_prompt === "monthly") {
+        } else if (reset_prompt === "monthly") {
             reset(user, "monthly");
         } else {
             console.log("Wrong input");
@@ -415,16 +430,16 @@ export function show_tasks_menu(user: User): void {
 function settings_menu(user: User): void {
     console.log("What do you want to do?");
     console.log("\n a) Change password \n b) Change username\n x) Back to main menu ");
-    let have_choiced = false;
-    while(!have_choiced){
+    let have_chosen = false;
+    while(!have_chosen){
         let choice: string = input("Choose a or b: ");
         choice.toLowerCase();
         if(choice === "a"){
             change_password(user);
-            have_choiced = true;
+            have_chosen = true;
         } else if(choice === "b"){
             change_username(user);
-            have_choiced = true;
+            have_chosen = true;
         } else if (choice === "x"){
             back_to_menu();
         } else {
@@ -519,23 +534,26 @@ export function login(): User | undefined {
  * @param user the user who gets its task removed
  */
 export function remove_task(user: User): void {
-    const curr_task: string = input("Which task do you want to remove?: ")
-    const task_look_up: Task | undefined  = user.tasks.find(x => x.name == curr_task);
-    if (task_look_up === undefined) {
-        let retry: string = input("You do not have such task, do you want to try again? Y / N ")
+    const curr_task: string = input("Which task do you want to remove?: ");
+    const find_task: Task | undefined  = user.tasks.find(x => 
+                                                           x.name == curr_task);
+    if (find_task === undefined) {
+        let retry: string = input("You do not have such task, " 
+                                + "do you want to try again? Y / N ");
         retry = retry.toLowerCase();
         if (retry === "y") {
             remove_task(user);
         } else {}
     } else {
-        const index = user.tasks.indexOf(task_look_up);
+        const index: number = user.tasks.indexOf(find_task);
         user.tasks = user.tasks.splice(index, 1);
         console.log("You successfully removed the task " + curr_task);
-        const repeat = input("Do you want to remove another task? Y / N ");
+        const repeat: string = input("Do you want to remove another task? " 
+                                   + "Y / N ");
         if (repeat === "Y") {
             remove_task(user);
         } else {}
-        } 
+    } 
 }
 
 let active_user: User | undefined = undefined;
@@ -565,20 +583,20 @@ export function log_in_menu() {
 function task_edit_menu(user: User): void {
     console.log("\nWhat do you want do do?");
     console.log("\n a) Add tasks \n b) Remove tasks \n c) Reset time\n x) Back to main menu\n"); //inte reset time men vet inte vad jag ska skriv
-    let have_choiced: boolean = false;
+    let have_chosen: boolean = false;
     console.log("");
-    while(!have_choiced) {
+    while(!have_chosen) {
         let choice: string = input("Choose a, b or c: ");
         choice = choice.toLowerCase();
         if(choice === "a") {
             add_task(user);
-            have_choiced = true;
+            have_chosen = true;
         } else if(choice === "b") {
             remove_task(user);
-            have_choiced = true;
+            have_chosen = true;
         } else if(choice === "c") {
             reset_tasks(user);
-            have_choiced = true;
+            have_chosen = true;
         } else if (choice === "x"){
             back_to_menu();
         }
