@@ -40,7 +40,7 @@ describe("change_username test", () => {
   
     it("should return succesfully changed your username", () => {
         mockInput.mockReturnValueOnce("Jane Doe");
-        change_username(user);
+        change_username(user);  //changing name of user to Jane Doe.
     
         expect(consoleSpy).toHaveBeenCalledWith("\nYou have sucessfully changed your username\n");
       });
@@ -55,7 +55,8 @@ describe("change_username test", () => {
         mockInput.mockReturnValueOnce("John Doe");
         change_username(user2);
         mockInput.mockReturnValueOnce("John Doe");
-        change_username(user);
+        change_username(user); 
+        //Tries to change the name of 2 users to John Doe.
     
         expect(consoleSpy).toHaveBeenCalledWith("Your username was unavailable, please try another one. ");
       }); 
@@ -144,7 +145,6 @@ describe("change_password test", () => {
 
 describe("login test", () => {
   let consoleSpy: jest.SpyInstance;
-  
 
   beforeEach(() => {
     consoleSpy = jest.spyOn(console, "log");
@@ -171,6 +171,13 @@ describe("login test", () => {
   });
 
   it("should successfully login and return the correct user", () => {
+    const kajsa: User = {
+      username: "Kajsa Kavat",
+      password: "qwerty",
+      tasks: [],
+      score: 0,
+      level: 1
+    };
     mockInput.mockReturnValueOnce("Kajsa Kavat");
     mockInput.mockReturnValueOnce("qwerty");
     create_user();
@@ -179,7 +186,7 @@ describe("login test", () => {
     const test = login();
     test;
     expect(consoleSpy).toHaveBeenCalledWith("\nYou have successfully logged in.\n");
-    //expect(test).toStrictEqual(user2);
+    expect(test).toStrictEqual(kajsa);
 
   });
   
