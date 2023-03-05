@@ -108,7 +108,7 @@ export function preset(user: User): void {
                                          + preset_array[i].name 
                                          + " as a " + preset_array[i].freq 
                                          + " task? Y / N ");
-                choice = choice.toLowerCase();
+                choice = choice?.toLowerCase();
                 if (choice === "y") {
                     user.tasks.push(preset_array[i]);
                     have_chosen = true;
@@ -127,7 +127,7 @@ export function preset(user: User): void {
             while (!have_chosen) {
                 let choice: string = input("Do you want do add your own tasks?" 
                                          + " Y / N ");
-                choice = choice.toLowerCase();
+                choice = choice?.toLowerCase();
                 if (choice === "y") {
                     add_task(user);
                     have_chosen = true;
@@ -146,7 +146,7 @@ export function preset(user: User): void {
             let choice: string = input("Do you want to choose "
                                      + "some tasks from a preset?" 
                                      + " Y / N ");
-            choice = choice.toLowerCase();
+            choice = choice?.toLowerCase();
             if (choice === "y") {
                 add_presets();
                 have_chosen = true;
@@ -268,13 +268,13 @@ export function remove_task(user: User): void {
     if (find_task === undefined) {
         let retry: string = input("You do not have such task, " 
                                 + "do you want to try again? Y / N ");
-        retry = retry.toLowerCase();
+        retry = retry?.toLowerCase();
         if (retry === "y") {
             remove_task(user);
         } else {}
     } else {
         const index: number = user.tasks.indexOf(find_task);
-        user.tasks = user.tasks.splice(index, 1);
+        user.tasks.splice(index, 1);
         console.log("You successfully removed the task " + curr_task);
         const repeat: string = input("Do you want to remove another task? " 
                                    + "Y / N ");
