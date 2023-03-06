@@ -6,6 +6,8 @@ run.ts
 menus.ts
 user.ts
 types.ts
+tasks.ts
+
 
 You will also need the lib folder, as our program uses imports from there.
 You will also have to install "prompt-sync" you can do that with this command in the terminal:
