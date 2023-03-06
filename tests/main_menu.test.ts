@@ -1,7 +1,7 @@
 const mockInput = jest.fn();
 jest.mock("prompt-sync", () => () => mockInput);
-import { main_menu } from "./menus";
-import { Task, User } from "./types";
+import { main_menu } from "../menus";
+import { Task, User } from "../types";
 
 
 
@@ -26,13 +26,14 @@ describe("main menu", () => {
 
     beforeEach(() => {
       consoleSpy = jest.spyOn(console, "log");
-      completeTaskSpy = jest.spyOn(require("./tasks"), "complete_tasks");
+      completeTaskSpy = jest.spyOn(require("../tasks"), "complete_tasks");
     });
   
     afterEach(() => {
       jest.resetAllMocks();
       
     });
+    
     
     it("Shows the user's score and level when choosing c.", () => {
         mockInput.mockReturnValueOnce("a");
@@ -43,7 +44,7 @@ describe("main menu", () => {
         mockInput.mockReturnValueOnce("x");
         main_menu();
         
-        expect(consoleSpy).toHaveBeenCalledWith("Your level is ", 1, + 
+        expect(consoleSpy).toHaveBeenCalledWith("Your level is ", 1 + 
         "\nand your score is:", 0);
 
     });
