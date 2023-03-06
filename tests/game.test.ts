@@ -135,7 +135,8 @@ describe("change_password test", () => {
       mockInput.mockReturnValueOnce("hello");
       change_password(user);
   
-      expect(consoleSpy).toHaveBeenCalledWith("\nPassword confirmation doesn't match the password, try again\n");
+      expect(consoleSpy).toHaveBeenCalledWith("\nPassword confirmation doesn't match "+ 
+      " the password, try again\n");
       expect(user.password).toStrictEqual(user.password);
     });
    
@@ -192,15 +193,14 @@ describe("login test", () => {
   
   it("correct username, but incorrect password", () => {
     mockInput.mockReturnValueOnce("Kajsa Kavat");
-    mockInput.mockReturnValueOnce("Hello123") //Kör först fel lösenord.
-    mockInput.mockReturnValueOnce("qwerty"); //Sen för att inte vara fast i oändlig while-loop körs det rätta lösenordet.
-    //egentligen borde vi lägga till i login funktionen, ett val att gå tillbaka till register menyn, ifall
-    //man glömt sitt lösenord, annars kmr användaren också vara fast i oändlig loop.
+    mockInput.mockReturnValueOnce("Hello123");
+    mockInput.mockReturnValueOnce("qwerty"); 
     
     login();
 
     expect(mockInput).toHaveBeenCalledWith("Password: ");
-    expect(consoleSpy).toHaveBeenCalledWith("\nWrong Password, try again\n");
+    expect(consoleSpy).toHaveBeenCalledWith("\nWrong Password, try again\n If you want to go" +
+    " back to the login menu write 'x'");
 
   });
 
