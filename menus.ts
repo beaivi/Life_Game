@@ -200,7 +200,7 @@ export function main_menu(): void {
             } else if(choice === "c"){
                 const level = (x: User)  => x.level;
                 const score = (x: User) => x.score;
-                console.log("Your level is ", level(active_user), + 
+                console.log("Your level is ", level(active_user) + 
                             "\nand your score is:", score(active_user));
             } else if (choice === "d"){
                 show_tasks_menu(active_user);
