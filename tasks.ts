@@ -2,6 +2,7 @@ import { type User, input, type Task, type Freq } from "./types";
 
 /**
  * Adds a new task to the user logged in.
+ * @param user, the user that the task will be added to.
  * */
 export function add_task(user: User): void {
     function create_task(): void {
@@ -16,7 +17,7 @@ export function add_task(user: User): void {
         while (!task_exists) {
             let freq: string = input("How often do you want to repeat the task?"
                                    + " Daily, weekly or monthly: ");
-            freq = freq.toLowerCase();
+            freq = freq?.toLowerCase();
             if (freq !== "daily" && freq !== "weekly" && freq !== "monthly") {
                 console.log("\nInvalid input, write your choice as" + 
                             " 'daily', 'weekly' or 'monthly'. ");
@@ -33,7 +34,7 @@ export function add_task(user: User): void {
                                              " many points this task gives"  + 
                                              " when completed? "
                                              + "Y / N ");
-                    choice = choice.toLowerCase();
+                    choice = choice?.toLowerCase();
                     if (choice === "y") {
                         let is_number: boolean = false;
                         while (!is_number) {
@@ -67,7 +68,7 @@ export function add_task(user: User): void {
     let have_chosen: boolean = false;
     while (!have_chosen) {
         let repeat: string = input("Do you want to input another task? Y / N ");
-        repeat = repeat.toLowerCase();
+        repeat = repeat?.toLowerCase();
         if (repeat === "y") {
             console.log("");
             have_chosen = true;
@@ -82,7 +83,7 @@ export function add_task(user: User): void {
 
 /**
  * Lets the user choose tasks from a preset of tasks
- * @param user the user the presets may be added to
+ * @param user the user the presets may be added to.
  */
 export function preset(user: User): void { 
     function add_presets(): void {
@@ -245,7 +246,7 @@ export function reset_tasks(user: User): void {
     while (!is_resetted) {
         let reset_prompt: string = input("Reset daily, weekly " 
                                        + "or monthly tasks: ");
-        reset_prompt = reset_prompt.toLowerCase();
+        reset_prompt = reset_prompt?.toLowerCase();
         if (reset_prompt === "daily") {
             reset(user, "daily");
         } else if (reset_prompt === "weekly") {
