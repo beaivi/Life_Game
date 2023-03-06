@@ -91,7 +91,7 @@ export function change_password(user: User): void {
                 while(new_password?.length < 6) {
                 if(new_password?.length < 6) {
                     console.log("\nThe password should be atleast 6" + 
-                    "characters long.");
+                    " characters long.");
                     new_password = input("New password: ");
                 }
                 }
