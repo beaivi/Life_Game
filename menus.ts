@@ -114,9 +114,9 @@ export function settings_menu(user: User): void {
 export let active_user: User | undefined = undefined;
 
 export function log_in_menu() {
-    while (active_user === undefined) {
+    while (active_user === undefined && !exit) {
         console.log("\nDo you want to: \n a). register \n b). log in? \n " + 
-                    " x). Exit out of program?")
+                    "x). Exit out of program?")
         let choice: string = input("Choose a, b or x. ")
         choice = choice?.toLowerCase();
         if (choice === "a") {
@@ -126,9 +126,8 @@ export function log_in_menu() {
         } else if (choice === "b") {
             active_user = login();
         } else if (choice === "x") {
-            break;
+            exit = true;
         } 
-
         else {
             console.log("\nWrong input, try again. \n")
         }
@@ -175,8 +174,9 @@ export function back_to_menu(): void {
  * 
  * 
 **/
+let exit: boolean = false;
 export function main_menu(): void {
-    let exit: boolean = false;
+    
     while (!exit) {
         if (active_user === undefined) {
             log_in_menu();
