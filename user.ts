@@ -1,7 +1,5 @@
 import { type User, input, user_table } from "./types";
 import { ph_lookup, ph_insert, ph_delete } from "./lib/hashtables";
-import {back_to_menu} from "./menus";
-
 /**
  * Creates a new user with username and password inputs.
  * @returns the new user created
@@ -132,7 +130,7 @@ export function login(): User | undefined {
                 console.log("\nYou have successfully logged in.\n");
                 return curr_user;
             } else if (password === "x") {
-                back_to_menu();
+                return;
             } else {
                 console.log("\nWrong Password, try again\n If you want to go" +
                 " back to the login menu write 'x'");
