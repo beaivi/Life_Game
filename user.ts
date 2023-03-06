@@ -29,7 +29,7 @@ export function create_user(): User {
             created_user = ph_lookup(user_table, username);
         }
         else {
-            console.log("Your usernames was unavailable, please " + 
+            console.log("Your usernames was unavailable, please" + 
                         " try another one. ");
         }
     }
