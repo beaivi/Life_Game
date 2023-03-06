@@ -1,0 +1,5 @@
+To run the tests, first install jest.
+Then download the jest.config.js and place it in the root directionary of your project.
+Then install these in the terminal:
+npm i --save-dev @types/jest
+npm install --save-dev ts-jest
