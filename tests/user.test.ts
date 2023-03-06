@@ -3,8 +3,7 @@ jest.mock("prompt-sync", () => () => mockInput);
 
 
 import {create_user, change_username, change_password, login,} from "./user";
-import {type User} from "./types"
-import exp = require("constants");
+import {type User} from "./types";
 
 
 const user: User = {
@@ -193,7 +192,8 @@ describe("change_password test", () => {
       mockInput.mockReturnValueOnce("hello");
       change_password(user);
   
-      expect(consoleSpy).toHaveBeenCalledWith("\nPassword confirmation doesn't match the password, try again\n");
+      expect(consoleSpy).toHaveBeenCalledWith("\nPassword confirmation doesn't match "+ 
+      " the password, try again\n");
       expect(user.password).toStrictEqual(user.password);
     });
    
@@ -252,7 +252,8 @@ describe("login test", () => {
     login();
 
     expect(mockInput).toHaveBeenCalledWith("Password: ");
-    expect(consoleSpy).toHaveBeenCalledWith("\nWrong Password, try again\n");
+    expect(consoleSpy).toHaveBeenCalledWith("\nWrong Password, try again\n If you want to go" +
+    " back to the login menu write 'x'");
 
   });
 
