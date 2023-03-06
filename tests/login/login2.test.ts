@@ -1,7 +1,7 @@
 const mockInput = jest.fn();
 jest.mock("prompt-sync", () => () => mockInput);
-import { create_user } from "../user";
-import { log_in_menu, back_to_menu, main_menu } from "../menus";
+import { create_user } from "./user";
+import { log_in_menu } from "./menus";
 
 
 describe("log in menu test", () => {
@@ -18,8 +18,8 @@ describe("log in menu test", () => {
 
     beforeEach(() => {
       consoleSpy = jest.spyOn(console, "log");
-      loginSpy = jest.spyOn(require("../user"), "login")
-      createUserSpy = jest.spyOn(require("../user"), "create_user");
+      loginSpy = jest.spyOn(require("./user"), "login")
+      createUserSpy = jest.spyOn(require("./user"), "create_user");
       const mockActiveUser = jest.fn();
       jest.resetModules();
     });
