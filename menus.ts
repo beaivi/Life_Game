@@ -60,22 +60,22 @@ export function show_tasks_menu(user: User): void {
     } else {
         while(true) {
             console.log("What do you want to do? \n a) Show all tasks\n" +
-                        " b) Show tasks left to do\n c) " + 
+                        " b) Show tasks left to do\n c)" + 
                         " Show completed tasks\n x) Back to main menu");
             let choice: string = input("Choose a, b or c: ");
             choice = choice.toLowerCase();
             if(choice === "a"){
                 console.log("\nYou have the following tasks: ");
                 show_tasks_with_freq(user.tasks);
-                break;
+                return;
             } else if(choice === "b") {
                 show_tasks_status(user, false);
-                break;
+                return;
             } else if(choice === "c") {
                 show_tasks_status(user, true);
-                break;
+                return;
             } else if(choice === "x") {
-                back_to_menu();
+                return;
             }
             else {
                 console.log("\nWrong input");
@@ -95,38 +95,44 @@ export function settings_menu(user: User): void {
                 " x) Back to main menu ");
     let have_chosen = false;
     while(!have_chosen){
-        let choice: string = input("Choose a or b: ");
-        choice.toLowerCase();
+        let choice: string = input("Choose a, b or x: ");
+        choice?.toLowerCase();
         if(choice === "a"){
             change_password(user);
             have_chosen = true;
+            return;
         } else if(choice === "b"){
             change_username(user);
             have_chosen = true;
+            return;
         } else if (choice === "x"){
-            back_to_menu();
+            return;
         } else {
             console.log("\nWrong input\n");
         }
     }
 }
 
+
 export let active_user: User | undefined = undefined;
 
-export function log_in_menu() {
-    while (active_user === undefined && !exit) {
-        console.log("\nDo you want to: \n a). register \n b). log in? \n " + 
-                    "x). Exit out of program?")
-        let choice: string = input("Choose a, b or x. ")
+/**
+ * Displays a menu with the choices of either logging in, or registering.
+ */
+
+export function log_in_menu(): void {
+    while (active_user === undefined) {
+        console.log("\nDo you want to: \n a). register \n b). log in? \n ")
+        let choice: string = input("Choose a or b ")
         choice = choice?.toLowerCase();
         if (choice === "a") {
             active_user = create_user();
             console.log("\nYou have successfully created a new user.\n")
             preset(active_user);
+            return;
         } else if (choice === "b") {
             active_user = login();
-        } else if (choice === "x") {
-            exit = true;
+            return;
         } 
         else {
             console.log("\nWrong input, try again. \n")
@@ -153,11 +159,13 @@ export function task_edit_menu(user: User): void {
         } else if(choice === "b") {
             remove_task(user);
             have_chosen = true;
+            return;
         } else if(choice === "c") {
             reset_tasks(user);
             have_chosen = true;
+            return;
         } else if (choice === "x"){
-            back_to_menu();
+            return;
         }
         else {
             console.log("Wrong input");
@@ -165,18 +173,13 @@ export function task_edit_menu(user: User): void {
     }
 }
 
-export function back_to_menu(): void {
-    main_menu();
-}
-
 /**
- * 
- * 
- * 
+ * Displays the main menu, the main that the user will ge redirected back to
+ * everytime they finish an action.
 **/
-let exit: boolean = false;
+
 export function main_menu(): void {
-    
+    let exit: boolean = false; 
     while (!exit) {
         if (active_user === undefined) {
             log_in_menu();
